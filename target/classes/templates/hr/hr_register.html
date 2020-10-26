@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>注册</title>
+    <link rel="stylesheet" href="/sign_up/css/style.css"/>
+    <script type="text/javascript" src="/sign_up/js/phone_varify.js"></script>
+    <script type="text/javascript" src="/sign_up/js/jquery.min.js"></script>
+    <script src="/sign_up/js/sweetalert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/sign_up/css/sweetalert.css">
+</head>
+<body>
+<section class="container">
+    <article class="half">
+        <h1>注册</h1>
+        <div class="content">
+            <div class="signup-cont cont">
+                <form>
+
+                    <input type="tel" name="hrMobile" id="tel" class="inpt" required="" placeholder="请输入您的手机号"
+                           maxlength="11">
+                    <input type="password" name="hrPassword" id="password" class="inpt" required="required"
+                           placeholder="请设置密码">
+                    <img src="/sign_up/img/closeeye.jpg" id="show_pass" onclick="showPass();"/>
+                    <input type="name" name="hrName" id="name" class="inpt" required="required" placeholder="请输入姓名">
+                    <input type="email" name="hrEmail" id="email" class="inpt" required="required" placeholder="请输入邮箱">
+                    <input type="name" name="companyName" id="companyName" class="inpt" required="required"
+                           placeholder="请输入企业名称">
+                    <input type="email" name="departmentName" id="departmentName" class="inpt" required="required"
+                           placeholder="请输入部门名称">
+                    <input type="button" value="注册" class="submit" id="submit" onclick="hrRegister()"/>
+
+                </form>
+            </div>
+        </div>
+    </article>
+    <div class="half bg">
+
+
+    </div>
+</section>
+<script>
+    function hrRegister() {
+        var hrMobile = document.getElementById("tel").value;
+        var hrPassword = document.getElementById("password").value;
+        var hrName = document.getElementById("name").value;
+        var hrEmail = document.getElementById("email").value;
+        var companyName = document.getElementById("companyName").value;
+        var departmentName = document.getElementById("departmentName").value;
+
+        $.ajax({
+            url: "/hr/register" + "?hrMobile=" + hrMobile + "&hrPassword="
+                + hrPassword + "&hrName=" + hrName + "&hrEmail=" + hrEmail
+                + "&companyName=" + companyName + "&departmentName=" + departmentName,
+            type: "post",
+            dataType: "json",
+            success: function (output) {
+                console.log(output.hrRegister)
+                if (output.hrRegister == "1") {
+                    swal("注册成功", "注册成功", "success");
+                    setTimeout(function () {
+                        window.location.href = "/";
+                    }, 3000);
+
+                } else {
+                    swal("注册失败", "注册失败", "error");
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

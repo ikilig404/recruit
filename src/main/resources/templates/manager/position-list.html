@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>BOSS直聘后台管理系统 - 用户信息</title>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/ss/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <!-- jqgrid-->
+    <link href="/css/plugins/jqgrid/ui.jqgrid.css?0820" rel="stylesheet">
+
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+
+    <style>
+        /* Additional style to fix warning dialog position */
+
+        #alertmod_table_list_2 {
+            top: 900px !important;
+        }
+    </style>
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h4>用户个人信息表</h4>
+                </div>
+                <div class="ibox-content">
+                    <div class="jqGrid_wrapper">
+                        <table id="table_list_2"></table>
+                        <div id="pager_list_2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="/js/jquery.min.js?v=2.1.4"></script>
+<script src="/js/bootstrap.min.js?v=3.3.6"></script>
+
+
+<!-- Peity -->
+<script src="/js/plugins/peity/jquery.peity.min.js"></script>
+
+<!-- jqGrid -->
+<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+
+<!-- 自定义js -->
+<script src="/js/content.js?v=1.0.0"></script>
+
+<!-- Page-Level Scripts -->
+<script>
+
+    function blockPositionById(id) {
+        $.ajax({
+            url: '/manager/block-by-id/' + id,
+            type: 'POST',
+            dataType: 'json',
+            success: function (msg) {
+                if (msg.block == '0') {
+                    alert("屏蔽失败！")
+                } else {
+                    alert("屏蔽成功！")
+                    self.location = '/manager/position-list';
+                }
+            }, error: function (msg) {
+                alert("屏蔽失败！")
+            }
+
+        });
+    }
+
+    function openPositionById(id) {
+        $.ajax({
+            url: '/manager/open-by-id/' + id,
+            type: 'POST',
+            dataType: 'json',
+            success: function (msg) {
+                if (msg.open == '0') {
+                    alert("使合法失败！")
+                } else {
+                    alert("使合法成功！")
+                    self.location = '/manager/position-list';
+                }
+            }, error: function (msg) {
+                alert("使合法失败！")
+            }
+
+        });
+    }
+
+    $(document).ready(function () {
+        $.jgrid.defaults.styleUI = 'Bootstrap';
+
+        // Configuration for jqGrid Example 2
+        $("#table_list_2").jqGrid({
+            url: 'getposition',
+            datatype: "json",
+            height: 800,
+            autowidth: true,
+            shrinkToFit: true,
+//                rowNum: 20,
+//                rowList: [10, 20, 30],
+//                multiselect:true,
+            colNames: ['岗位Id', '岗位名称', '岗位要求', '招聘人数', '工作城市', '最低月薪', '最高月薪', '发布日期', '状态', '操作'],
+            colModel: [
+                {
+                    name: 'positionId',
+                    index: 'positionId',
+                    editable: false,
+                    width: 30,
+                    sorttype: "int",
+                    search: true
+                },
+                {
+                    name: 'title',
+                    index: 'title',
+                    editable: false,
+                    width: 60
+                },
+                {
+                    name: 'requirement',
+                    index: 'requirement',
+                    editable: false,
+                    width: 90
+                },
+                {
+                    name: 'quantity',
+                    index: 'quantity',
+                    editable: false,
+                    width: 40,
+                    align: "center",
+                    sortable: false
+                },
+                {
+                    name: 'workCity',
+                    index: 'workCity',
+                    editable: false,
+                    width: 40,
+                    align: "center",
+                    sortable: false
+                },
+                {
+                    name: 'salaryDown',
+                    index: 'salaryDown',
+                    editable: false,
+                    width: 40,
+                    align: "center",
+                    sortable: false
+                },
+                {
+                    name: 'salaryUp',
+                    index: 'salaryUp',
+                    editable: false,
+                    width: 40,
+                    align: "center",
+                    sortable: false
+                },
+                {
+                    name: 'releaseDate',
+                    index: 'releaseDate',
+                    editable: false,
+                    width: 90,
+                    align: "center",
+                    sortable: false
+                },
+                {
+                    name: 'statePub',
+                    index: 'statePub',
+                    editable: true,
+                    width: 60,
+                    align: "center",
+                    sortable: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        var content;
+                        if (cellvalue == 1) {
+                            content = '违规，未屏蔽';
+                        } else if (cellvalue == 0) {
+                            content = '合法';
+                        } else if (cellvalue == 2) {
+                            content = '违规，已屏蔽';
+                        }
+                        return content;
+                    }
+                },
+                {
+                    name: 'operation',
+                    fixed: true,
+                    editable: true,
+                    width: 100,
+                    align: "center",
+                    sortable: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (rowObject.statePub == 0) {
+                            return '<input onclick="blockPositionById(' + rowObject.positionId + ')" type="button" value="屏蔽"' + ' />';
+                        } else if (rowObject.statePub == 2) {
+                            return '<input onclick="openPositionById(' + rowObject.positionId + ')" type="button" value="合法"' + ' />';
+                        } else {
+                            return '<input onclick="blockPositionById(' + rowObject.positionId + ')" type="button" value="屏蔽"' + ' />'
+                                + '<input onclick="openPositionById(' + rowObject.positionId + ')" type="button" value="合法"' + ' />';
+                        }
+                    }
+                }
+            ],
+            pager: "#pager_list_2",
+            viewrecords: true,
+            caption: "岗位管理",
+            hidegrid: false,
+            loadonce: true
+        });
+
+        // Add selection
+        $("#table_list_2").setSelection(4, true);
+
+
+        // Setup buttons
+        $("#table_list_2").jqGrid('navGrid', '#pager_list_2', {
+            edit: false,
+            add: false,
+            del: false,
+            search: true
+        }, {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+
+        // Add responsive to jqGrid
+        $(window).bind('resize', function () {
+            var width = $('.jqGrid_wrapper').width();
+            $('#table_list_2').setGridWidth(width);
+        });
+    });
+</script>
+
+</body>
+
+</html>
